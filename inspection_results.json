@@ -1,0 +1,121 @@
+{
+  "Ventas 2025.xlsx": {
+    "sheetName": "2025",
+    "headers": [
+      "FECHA",
+      "TIENDA",
+      "GRUPO",
+      "DESCRIPCION",
+      "Cantidad Vendida"
+    ],
+    "sample1": [
+      45771,
+      "Armenia",
+      "CANTO",
+      "CANTO METALLO GRAFFIT",
+      49
+    ],
+    "sample2": [
+      45779,
+      "Bogotá Soacha",
+      "DELUXE",
+      "TABLERO RH TAUPE",
+      1
+    ]
+  },
+  "VENTAS- 02-01-2026.xlsx": {
+    "sheetName": "d0011134-5e38-405b-abb7-07eef97",
+    "headers": [
+      "EAN",
+      "Descripción",
+      "Código interno Almacén",
+      "Fecha Inicial",
+      "Fecha Final",
+      "Código EAN del item",
+      "Código de Ítem / Comprador",
+      "Código de Ítem / Proveedor",
+      "Descripción del Ítem",
+      "Cantidad Vendida",
+      "Unidad de Medida",
+      "Precio neto al consumido con impuestos",
+      "Precio neto al consumido sin impuestos"
+    ],
+    "sample1": [
+      "7703670900689",
+      "SODIMAC - BOGOTA CALLE 80",
+      "SODIMAC - BOGOTA CALLE 80",
+      "02-01-2026",
+      "02-01-2026",
+      "7703670773405",
+      "379238",
+      null,
+      "CANTO GRIS PLOMO",
+      "19",
+      null,
+      null,
+      "1930"
+    ],
+    "sample2": [
+      "7703670900801",
+      "SODIMAC - BOGOTA SUR",
+      "SODIMAC - BOGOTA SUR",
+      "02-01-2026",
+      "02-01-2026",
+      "2077000489676",
+      "518924",
+      null,
+      "TABLERO CAPUCCINO",
+      "1",
+      null,
+      null,
+      "313500"
+    ]
+  },
+  "INVENTARIO-12-01-2026.xlsx": {
+    "sheetName": "e07a8b93-fbe5-48a5-ac81-6983f62",
+    "headers": [
+      "Fecha Inicio de Reporte:",
+      "12-01-2026",
+      "Fecha Final del Reporte:",
+      "12-01-2026"
+    ],
+    "sample1": [
+      "Emisor del Reporte",
+      "Sodimac Colombia S.A.- Home Center"
+    ],
+    "sample2": [
+      "Receptor del Reporte",
+      "High Gloss Inversiones Sas"
+    ]
+  },
+  "sku sodimac con grupos.xlsx": {
+    "sheetName": "sku 2024",
+    "headers": [
+      "ITEM",
+      "CODIGO INTERNO MAB",
+      "Código de Ítem / Comprador",
+      "DESCRIPCION",
+      "EAN",
+      "GRUPO ",
+      "REFERENCIA"
+    ],
+    "sample1": [
+      1,
+      "L-3912",
+      409687,
+      "TABLERO ARENA ",
+      "77036-7087-7356",
+      "TABLERO",
+      "PREMIUM"
+    ],
+    "sample2": [
+      2,
+      "L-0977",
+      224422,
+      "TABLERO BLANCO ",
+      "77036-7033-7386",
+      "TABLERO",
+      "PREMIUM"
+    ]
+  }
+}

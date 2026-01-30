@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+*.local
+.DS_Store
+# Evitar subir archivos pesados si no es necesario
+# *.xlsx
+# *.xls
