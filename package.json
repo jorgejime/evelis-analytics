@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.94.0",
     "clsx": "^2.0.0",
     "framer-motion": "^10.16.4",
     "html2canvas": "^1.4.1",

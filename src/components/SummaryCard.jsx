@@ -1,26 +1,39 @@
-const SummaryCard = ({ title, value, color }) => {
+import { TrendingUp, TrendingDown } from 'lucide-react';
+
+/**
+ * Tarjeta de resumen con diseño glassmórfico premium
+ * Soporta variantes: primary, success, warning, danger
+ */
+const SummaryCard = ({
+    title,
+    value,
+    icon: Icon,
+    variant = 'primary',
+    trend = null,
+    trendValue = null,
+    subtitle = null
+}) => {
     return (
-        <div className="report-card" style={{ padding: '1.25rem', marginBottom: 0 }}>
-            <div className="label" style={{
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                color: '#64748b',
-                textTransform: 'uppercase',
-                marginBottom: '0.25rem'
-            }}>
-                {title}
+        <div className={`summary-card ${variant}`}>
+            <div className="summary-card-label">{title}</div>
+            <div className="summary-card-value">
+                {typeof value === 'number' ? value.toLocaleString() : value}
             </div>
-            <div style={{
-                fontSize: '1.75rem',
-                fontWeight: 800,
-                color: '#1e293b',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-            }}>
-                <div style={{ width: '4px', height: '24px', backgroundColor: color, borderRadius: '2px' }}></div>
-                {value}
-            </div>
+
+            {(trend !== null || subtitle) && (
+                <div className={`summary-card-trend ${trend === 'up' ? 'up' : trend === 'down' ? 'down' : ''}`}>
+                    {trend === 'up' && <TrendingUp size={14} />}
+                    {trend === 'down' && <TrendingDown size={14} />}
+                    {trendValue && <span>{trendValue}</span>}
+                    {subtitle && <span style={{ color: 'var(--text-muted)' }}>{subtitle}</span>}
+                </div>
+            )}
+
+            {Icon && (
+                <div className="summary-card-icon">
+                    <Icon size={24} />
+                </div>
+            )}
         </div>
     );
 };

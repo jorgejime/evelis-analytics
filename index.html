@@ -1,15 +1,74 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard de Ventas Premium</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
+    
+    <!-- SEO Meta Tags -->
+    <title>EVELIS Analytics - Dashboard de Ventas e Inventario</title>
+    <meta name="description" content="Sistema de Business Intelligence para análisis de ventas, control de inventario y reportes automatizados. Visualiza tus datos de Excel con gráficos interactivos." />
+    <meta name="keywords" content="dashboard, ventas, inventario, analytics, BI, reportes, Excel" />
+    <meta name="author" content="EVELIS Analytics" />
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="EVELIS Analytics - Dashboard de BI" />
+    <meta property="og:description" content="Sistema de Business Intelligence para análisis de ventas y control de inventario" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#6366f1" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" />
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Preload critical assets -->
+    <style>
+        /* Critical CSS for fast initial render */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            -webkit-font-smoothing: antialiased;
+        }
+        #root {
+            min-height: 100vh;
+        }
+        /* Initial loading state */
+        .initial-loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        .initial-loader-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="initial-loader">
+            <div class="initial-loader-spinner"></div>
+        </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
-  </body>
+</body>
 </html>

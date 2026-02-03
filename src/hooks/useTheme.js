@@ -1,0 +1,26 @@
+import { useState, useEffect } from 'react';
+
+/**
+ * Hook para manejar el tema claro/oscuro
+ */
+export const useTheme = () => {
+    const [theme, setTheme] = useState(() => {
+        // Intentar recuperar tema guardado o usar preferencia del sistema
+        const saved = localStorage.getItem('theme');
+        if (saved) return saved;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    };
+
+    return { theme, toggleTheme };
+};
+
+export default useTheme;
