@@ -163,7 +163,8 @@ function App() {
         filteredSalesData.forEach(s => {
             const t = s.tienda || 'Otros';
             let g = (s.grupo || 'OTROS').trim().toUpperCase();
-            if (g.includes('MAB')) g = 'MAB RH';
+            if (g.includes('CANTO') || g.includes('CUBRECANTOS')) g = 'CANTO';
+            else if (g.includes('MAB')) g = 'MAB RH';
             else if (g.includes('DELUXE')) g = 'DELUXE';
             else if (g.includes('PREMIUM')) g = 'PREMIUM';
             else if (g === 'OTROS' || g === 'OTRO') g = 'SIN CLASIFICAR';
@@ -173,7 +174,7 @@ function App() {
             result[t].breakdowns[g] += s.cantidad;
             result[t].total += s.cantidad;
         });
-        const priority = ['DELUXE', 'PREMIUM', 'MAB RH'];
+        const priority = ['DELUXE', 'PREMIUM', 'MAB RH', 'CANTO'];
         const sortedGroups = [...allGroups].sort((a, b) => {
             const iA = priority.indexOf(a), iB = priority.indexOf(b);
             if (iA !== -1 && iB !== -1) return iA - iB;

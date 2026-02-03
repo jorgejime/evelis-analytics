@@ -29,6 +29,10 @@ const inferGroupByKeywords = (description) => {
 
     if (desc.includes('DELUXE') || desc.includes('DLX')) return 'DELUXE';
     if (desc.includes('PREMIUM') || desc.includes('PRM')) return 'PREMIUM';
+
+    // Si es CANTO, lo devolvemos como categoría propia
+    if (desc.includes('CANTO') || desc.includes('CUBRECANTOS')) return 'CANTO';
+
     if (desc.includes('MAB') || desc.includes('RH')) return 'MAB RH';
 
     if (desc.includes('TABLERO')) {
@@ -36,7 +40,6 @@ const inferGroupByKeywords = (description) => {
         return 'MAB RH';
     }
 
-    if (desc.includes('CANTO')) return 'MAB RH';
     if (desc.includes('GRAFFIT') || desc.includes('METALLO')) return 'DELUXE';
 
     return null;
