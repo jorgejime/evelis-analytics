@@ -49,17 +49,51 @@ export const processSKUMaster = (data) => {
     const mapping = {};
     data.forEach(item => {
         const row = normalizeHeaders(item);
+
+        // Buscar códigos (EAN, SKU, etc.)
         const codes = [
             row['CODIGO INTERNO MAB'],
             row['CÓDIGO DE ÍTEM / COMPRADOR'],
             row['EAN'],
-            row['CODIGO']
+            row['CODIGO'],
+            row['SKU']
         ];
+
+        // Buscar el Grupo de forma más agresiva
+        let group = null;
+
+        // 1. Columnas explícitas comunes
+        const directGroup = row['GRUPO'] || row['CATEGORIA'] || row['CATEGORÍA'] || row['LINEA'] || row['FAMILIA'] || row['CLASIFICACION'];
+        if (directGroup) {
+            group = directGroup.toString().trim().toUpperCase();
+        }
+
+        // 2. Si no hay directo, buscar cualquier columna que contenga "GRUPO" o "CATEG"
+        if (!group) {
+            const keys = Object.keys(row);
+            const groupKey = keys.find(k => k.includes('GRUPO') || k.includes('CATEG'));
+            if (groupKey && row[groupKey]) {
+                group = row[groupKey].toString().trim().toUpperCase();
+            }
+        }
+
+        // 3. Fallback a Referencia si no es un código
+        if (!group) {
+            const ref = row['REFERENCIA'] || row['REF'];
+            if (ref && isNaN(ref) && ref.length > 3) { // Asumir que si no es número es un grupo/familia
+                group = ref.toString().trim().toUpperCase();
+            }
+        }
+
+        // 4. Default
+        if (!group) group = 'OTROS';
+
         const productData = {
-            grupo: (row['REFERENCIA'] || row['GRUPO'] || row['LINEA'] || row['CATEGORIA'] || 'OTROS').toString().trim().toUpperCase(),
+            grupo: group,
             referencia: row['REFERENCIA'] || row['REF'],
-            descripcion: row['DESCRIPCION'] || row['DESCRIPCIÓN'] || row['NOMBRE']
+            descripcion: row['DESCRIPCION'] || row['DESCRIPCIÓN'] || row['NOMBRE'] || row['PRODUCTO']
         };
+
         codes.forEach(c => {
             const clean = cleanCode(c);
             if (clean) mapping[clean] = productData;

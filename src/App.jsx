@@ -61,41 +61,66 @@ function App() {
         if (!files.length) return;
         setLoading(true);
 
+        let reportMessages = [];
+        let processedCount = 0;
+
         try {
             let currentMapping = { ...skuMapping };
 
+            // Fase 1: Procesar SKU Master e Inventario (Prioridad)
             for (const file of files) {
                 const raw = await readExcel(file);
                 if (!raw || raw.length === 0) continue;
                 const keys = Object.keys(raw[0]).join(' ').toUpperCase();
 
-                if ((keys.includes('ITEM') || keys.includes('CODIGO INTERNO MAB') || keys.includes('EAN')) &&
-                    (keys.includes('GRUPO') || keys.includes('REFERENCIA'))) {
+                // Detección SKU Master
+                if ((keys.includes('ITEM') || keys.includes('CODIGO INTERNO MAB') || keys.includes('EAN') || keys.includes('SKU')) &&
+                    (keys.includes('GRUPO') || keys.includes('REFERENCIA') || keys.includes('CATEGORIA'))) {
                     const newMapping = processSKUMaster(raw);
+                    const count = Object.keys(newMapping).length;
                     currentMapping = { ...currentMapping, ...newMapping };
                     updateSkuMapping(newMapping);
+                    reportMessages.push(`✅ ${file.name}: Maestro SKU actualizado (${count} productos).`);
+                    processedCount++;
                 }
             }
 
+            // Fase 2: Procesar Ventas e Inventario
             for (const file of files) {
                 const raw = await readExcel(file);
                 if (!raw || raw.length === 0) continue;
                 const keys = Object.keys(raw[0]).join(' ').toUpperCase();
 
-                if (keys.includes('CANTIDAD') || keys.includes('TIENDA') || keys.includes('ALMACÉN') || keys.includes('LUGAR')) {
+                // Detección Ventas
+                if ((keys.includes('CANTIDAD') || keys.includes('VENTA') || keys.includes('CANT')) &&
+                    (keys.includes('TIENDA') || keys.includes('ALMACÉN') || keys.includes('LUGAR') || keys.includes('DESCRIPCIÓN'))) {
+
                     if (keys.includes('FECHA') || keys.includes('CANTIDAD VENDIDA')) {
                         const processed = processSales(raw, currentMapping);
                         addSalesData(processed);
-                    } else if (keys.includes('SALDO') || keys.includes('BODEGA') || keys.includes('NOMBRE LUGAR') ||
+                        reportMessages.push(`📊 ${file.name}: Ventas cargadas (${processed.length} registros).`);
+                        processedCount++;
+                    }
+                    // Detección Inventario
+                    else if (keys.includes('SALDO') || keys.includes('BODEGA') || keys.includes('STOCK') ||
                         (keys.includes('CANTIDAD') && !keys.includes('VENDIDA'))) {
                         const processed = processInventory(raw);
                         setInventory(processed);
+                        reportMessages.push(`📦 ${file.name}: Inventario actualizado (${processed.length} registros).`);
+                        processedCount++;
                     }
                 }
             }
+
+            if (processedCount > 0) {
+                alert(`Procesamiento completado:\n\n${reportMessages.join('\n')}`);
+            } else {
+                alert('⚠️ No se reconocieron datos validos en los archivos seleccionados.');
+            }
+
         } catch (err) {
             console.error('Error procesando archivos:', err);
-            alert('Error procesando archivos: ' + err.message);
+            alert('❌ Error procesando archivos: ' + err.message);
         } finally {
             setLoading(false);
             e.target.value = '';
