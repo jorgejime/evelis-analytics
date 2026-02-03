@@ -263,7 +263,7 @@ export const SalesPieChart = ({ data, title, dataKey = 'value', nameKey = 'name'
 /**
  * Gráfico de Barras Comparativo (múltiples series)
  */
-export const ComparisonBarChart = ({ data, title, bars = [] }) => (
+export const ComparisonBarChart = ({ data, title, bars = [], stacked = false }) => (
     <div className="report-card">
         <div className="report-header">
             <h3 className="report-title">{title}</h3>
@@ -301,9 +301,10 @@ export const ComparisonBarChart = ({ data, title, bars = [] }) => (
                             key={index}
                             dataKey={bar.dataKey}
                             name={bar.name}
-                            fill={SOLID_COLORS[index % SOLID_COLORS.length]}
-                            radius={[4, 4, 0, 0]}
+                            fill={bar.color || SOLID_COLORS[index % SOLID_COLORS.length]}
+                            radius={stacked ? (index === bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]) : [4, 4, 0, 0]}
                             maxBarSize={40}
+                            stackId={stacked ? "a" : undefined}
                         />
                     ))}
                 </BarChart>

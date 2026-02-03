@@ -11,7 +11,7 @@ import DataTable from './components/DataTable';
 import DropZone from './components/DropZone';
 import LoadingScreen from './components/LoadingScreen';
 import FilterPanel from './components/FilterPanel';
-import { SalesBarChart, SalesAreaChart, SalesPieChart } from './components/SalesCharts';
+import { SalesBarChart, SalesAreaChart, SalesPieChart, ComparisonBarChart } from './components/SalesCharts';
 
 // Hooks
 import useTheme from './hooks/useTheme';
@@ -67,13 +67,12 @@ function App() {
         try {
             let currentMapping = { ...skuMapping };
 
-            // Fase 1: Procesar SKU Master e Inventario (Prioridad)
+            // Fase 1: Procesar SKU Master e Inventario
             for (const file of files) {
                 const raw = await readExcel(file);
                 if (!raw || raw.length === 0) continue;
                 const keys = Object.keys(raw[0]).join(' ').toUpperCase();
 
-                // Detección SKU Master
                 if ((keys.includes('ITEM') || keys.includes('CODIGO INTERNO MAB') || keys.includes('EAN') || keys.includes('SKU')) &&
                     (keys.includes('GRUPO') || keys.includes('REFERENCIA') || keys.includes('CATEGORIA'))) {
                     const newMapping = processSKUMaster(raw);
@@ -91,7 +90,6 @@ function App() {
                 if (!raw || raw.length === 0) continue;
                 const keys = Object.keys(raw[0]).join(' ').toUpperCase();
 
-                // Detección Ventas
                 if ((keys.includes('CANTIDAD') || keys.includes('VENTA') || keys.includes('CANT')) &&
                     (keys.includes('TIENDA') || keys.includes('ALMACÉN') || keys.includes('LUGAR') || keys.includes('DESCRIPCIÓN'))) {
 
@@ -100,9 +98,7 @@ function App() {
                         addSalesData(processed);
                         reportMessages.push(`📊 ${file.name}: Ventas cargadas (${processed.length} registros).`);
                         processedCount++;
-                    }
-                    // Detección Inventario
-                    else if (keys.includes('SALDO') || keys.includes('BODEGA') || keys.includes('STOCK') ||
+                    } else if (keys.includes('SALDO') || keys.includes('BODEGA') || keys.includes('STOCK') ||
                         (keys.includes('CANTIDAD') && !keys.includes('VENDIDA'))) {
                         const processed = processInventory(raw);
                         setInventory(processed);
@@ -200,13 +196,35 @@ function App() {
             name: MONTHS_SHORT[idx],
             value: filteredSalesData.filter(s => s.date?.getMonth() === idx).reduce((a, b) => a + b.cantidad, 0)
         }));
-        const storeData = pivotTiendaMes.slice(0, 8).map(s => ({ name: s.name, value: s.total }));
+
+        // NUEVO: Cálculo para gráfico apilado (Cantos vs Otros)
+        const storeGroups = filteredSalesData.reduce((acc, curr) => {
+            const store = curr.tienda || 'Otros';
+            if (!acc[store]) acc[store] = { name: store, cantos: 0, otros: 0, total: 0 };
+
+            // Verificación simple de grupo
+            const grupo = (curr.grupo || '').trim().toUpperCase();
+            if (grupo.includes('CANTO')) {
+                acc[store].cantos += curr.cantidad;
+            } else {
+                acc[store].otros += curr.cantidad;
+            }
+            acc[store].total += curr.cantidad;
+            return acc;
+        }, {});
+
+        // Tomar TOP 10 tiendas y formatear para el gráfico
+        const storeData = Object.values(storeGroups)
+            .sort((a, b) => b.total - a.total)
+            .slice(0, 12);
+
         const groupData = categorySummary.groups.map(g => ({
             name: g,
             value: categorySummary.data.reduce((acc, store) => acc + (store.breakdowns[g] || 0), 0)
         }));
+
         return { monthlyData, storeData, groupData };
-    }, [filteredSalesData, pivotTiendaMes, categorySummary]);
+    }, [filteredSalesData, categorySummary, pivotTiendaMes]); // pivotTiendaMes ya no es esencial para storeData pero lo dejo por si acaso
 
     const summaryMetrics = useMemo(() => ({
         totalUnits: filteredSalesData.reduce((a, b) => a + b.cantidad, 0),
@@ -305,7 +323,17 @@ function App() {
                                         <SalesAreaChart data={chartData.monthlyData} title="Tendencia de Ventas Mensual" />
                                         <SalesPieChart data={chartData.groupData} title="Distribución por Categoría" />
                                     </div>
-                                    <SalesBarChart data={chartData.storeData} title="Top Tiendas por Volumen de Venta" />
+
+                                    <ComparisonBarChart
+                                        data={chartData.storeData}
+                                        title="Top Tiendas: Volumen Total (Cantos vs Otros)"
+                                        stacked={true}
+                                        bars={[
+                                            { dataKey: 'cantos', name: 'Cantos', color: '#8b5cf6' }, // Violeta
+                                            { dataKey: 'otros', name: 'Otros Productos', color: '#94a3b8' } // Gris suave
+                                        ]}
+                                    />
+
                                     <div className="report-card">
                                         <div className="report-header">
                                             <h3 className="report-title">Resumen por Tienda y Línea</h3>
